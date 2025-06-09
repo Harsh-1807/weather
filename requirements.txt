@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-dotenv
+requests
+pydantic
+python-jose
+passlib
+python-multipart
+aiohttp
+cachetools

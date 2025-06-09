@@ -1,0 +1,182 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6",
+		"name": "Weather Event Planner",
+		"description": "Collection for testing the Weather Event Planner API endpoints",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Event Management",
+			"item": [
+				{
+					"name": "Create Cricket Tournament",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Cricket Tournament\",\n    \"location\": \"Mumbai\",\n    \"date\": \"2024-03-16T10:00:00\",\n    \"event_type\": \"cricket\",\n    \"description\": \"Annual cricket tournament\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/events",
+							"host": ["{{base_url}}"],
+							"path": ["events"]
+						}
+					}
+				},
+				{
+					"name": "Create Wedding",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Beach Wedding\",\n    \"location\": \"Goa\",\n    \"date\": \"2024-12-10T15:00:00\",\n    \"event_type\": \"wedding\",\n    \"description\": \"Beach wedding ceremony\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/events",
+							"host": ["{{base_url}}"],
+							"path": ["events"]
+						}
+					}
+				},
+				{
+					"name": "Create Hiking Trip",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Weekend Hiking\",\n    \"location\": \"Lonavala\",\n    \"date\": \"2024-10-20T08:00:00\",\n    \"event_type\": \"hiking\",\n    \"description\": \"Weekend hiking trip\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/events",
+							"host": ["{{base_url}}"],
+							"path": ["events"]
+						}
+					}
+				},
+				{
+					"name": "List All Events",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/events",
+							"host": ["{{base_url}}"],
+							"path": ["events"]
+						}
+					}
+				},
+				{
+					"name": "Update Event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Cricket Tournament\",\n    \"description\": \"Updated tournament details\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/events/1",
+							"host": ["{{base_url}}"],
+							"path": ["events", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Weather Integration",
+			"item": [
+				{
+					"name": "Get Weather for Location",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/weather/Mumbai/2024-03-16T10:00:00",
+							"host": ["{{base_url}}"],
+							"path": ["weather", "Mumbai", "2024-03-16T10:00:00"]
+						}
+					}
+				},
+				{
+					"name": "Check Event Weather",
+					"request": {
+						"method": "POST",
+						"url": {
+							"raw": "{{base_url}}/events/1/weather-check",
+							"host": ["{{base_url}}"],
+							"path": ["events", "1", "weather-check"]
+						}
+					}
+				},
+				{
+					"name": "Get Alternative Dates",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/events/1/alternatives",
+							"host": ["{{base_url}}"],
+							"path": ["events", "1", "alternatives"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Error Handling",
+			"item": [
+				{
+					"name": "Invalid Location",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/weather/InvalidCity/2024-03-16T10:00:00",
+							"host": ["{{base_url}}"],
+							"path": ["weather", "InvalidCity", "2024-03-16T10:00:00"]
+						}
+					}
+				},
+				{
+					"name": "Non-existent Event",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/events/999",
+							"host": ["{{base_url}}"],
+							"path": ["events", "999"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+} 
