@@ -5,21 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Event Planner</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .weather-card {
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-radius: 10px;
+            overflow: hidden;
         }
         .weather-card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .weather-excellent {
+            border-left: 5px solid #28a745;
+            background: linear-gradient(to right, rgba(40, 167, 69, 0.1), transparent);
         }
         .weather-good {
-            border-left: 5px solid #28a745;
+            border-left: 5px solid #17a2b8;
+            background: linear-gradient(to right, rgba(23, 162, 184, 0.1), transparent);
         }
-        .weather-okay {
+        .weather-fair {
             border-left: 5px solid #ffc107;
+            background: linear-gradient(to right, rgba(255, 193, 7, 0.1), transparent);
         }
         .weather-poor {
             border-left: 5px solid #dc3545;
+            background: linear-gradient(to right, rgba(220, 53, 69, 0.1), transparent);
+        }
+        .weather-unknown {
+            border-left: 5px solid #6c757d;
+            background: linear-gradient(to right, rgba(108, 117, 125, 0.1), transparent);
+        }
+        #locationMap {
+            height: 300px;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .weather-score-link {
+            cursor: pointer;
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .weather-score-link:hover {
+            color: #0d6efd;
+        }
+        .weather-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+        .weather-parameter {
+            padding: 0.5rem;
+            border-radius: 5px;
+            background: rgba(0,0,0,0.03);
+            margin-bottom: 0.5rem;
+        }
+        .weather-parameter i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.5rem;
+        }
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 1rem;
+        }
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .modal-header {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            border-bottom: none;
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .weather-trend {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        .weather-trend i {
+            margin-right: 0.5rem;
+        }
+        .trend-up {
+            color: #28a745;
+        }
+        .trend-down {
+            color: #dc3545;
+        }
+        .event-type-badge {
+            font-size: 0.8rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 20px;
+            background: #e9ecef;
+            color: #495057;
+        }
+        .event-type-badge.outdoor_sports {
+            background: #d4edda;
+            color: #155724;
+        }
+        .event-type-badge.formal_events {
+            background: #cce5ff;
+            color: #004085;
         }
     </style>
 </head>
@@ -33,8 +125,8 @@
     <div class="container mt-4">
         <div class="row">
             <div class="col-md-4">
-                <div class="card">
-                    <div class="card-header">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
                         <h5 class="card-title mb-0">Create New Event</h5>
                     </div>
                     <div class="card-body">
@@ -46,24 +138,26 @@
                             <div class="mb-3">
                                 <label for="location" class="form-label">Location</label>
                                 <input type="text" class="form-control" id="location" required>
+                                <div id="locationMap"></div>
                             </div>
                             <div class="mb-3">
                                 <label for="eventDate" class="form-label">Date</label>
                                 <input type="datetime-local" class="form-control" id="eventDate" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="eventType" class="form-label">Event Type</label>
-                                <select class="form-select" id="eventType" required>
-                                    <option value="cricket">Cricket</option>
-                                    <option value="wedding">Wedding</option>
-                                    <option value="hiking">Hiking</option>
-                                    <option value="corporate">Corporate</option>
-                                    <option value="other">Other</option>
+                            <div class="form-group">
+                                <label for="eventType">Event Type</label>
+                                <select class="form-control" id="eventType" name="event_type" required>
+                                    <option value="outdoor_sports">Outdoor Sports</option>
+                                    <option value="formal_events">Formal Events</option>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
                                 <textarea class="form-control" id="description" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email (for weather notifications)</label>
+                                <input type="email" class="form-control" id="email" placeholder="optional">
                             </div>
                             <button type="submit" class="btn btn-primary">Create Event</button>
                         </form>
@@ -71,10 +165,12 @@
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0">Events</h5>
-                        <button class="btn btn-sm btn-outline-primary" onclick="refreshEvents()">Refresh</button>
+                        <button class="btn btn-light btn-sm" onclick="refreshEvents()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
                     </div>
                     <div class="card-body">
                         <div id="eventsList" class="row g-3">
@@ -86,7 +182,84 @@
         </div>
     </div>
 
+    <div class="modal fade" id="alternativesModal" tabindex="-1" role="dialog" aria-labelledby="alternativesModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="alternativesModalLabel">Alternative Dates</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="alternativesList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="weatherDetailsModal" tabindex="-1" role="dialog" aria-labelledby="weatherDetailsModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="weatherDetailsModalLabel">Weather Analysis Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="weatherDetailsContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script>
+        // Global variables
+        let events = []; // Store events data globally
+        let map = L.map('locationMap').setView([0, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        let marker = null;
+
+        // Geocode location when input changes
+        let geocodeTimeout;
+        document.getElementById('location').addEventListener('input', function(e) {
+            clearTimeout(geocodeTimeout);
+            geocodeTimeout = setTimeout(() => {
+                const location = e.target.value;
+                if (location) {
+                    geocodeLocation(location);
+                }
+            }, 500);
+        });
+
+        // Geocode function
+        async function geocodeLocation(location) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`);
+                const data = await response.json();
+                
+                if (data && data.length > 0) {
+                    const { lat, lon } = data[0];
+                    
+                    // Update map
+                    map.setView([lat, lon], 12);
+                    
+                    // Update marker
+                    if (marker) {
+                        marker.setLatLng([lat, lon]);
+                    } else {
+                        marker = L.marker([lat, lon]).addTo(map);
+                    }
+                }
+            } catch (error) {
+                console.error('Error geocoding location:', error);
+            }
+        }
+
         // Event form submission
         document.getElementById('eventForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -96,7 +269,8 @@
                 location: document.getElementById('location').value,
                 date: document.getElementById('eventDate').value,
                 event_type: document.getElementById('eventType').value,
-                description: document.getElementById('description').value
+                description: document.getElementById('description').value,
+                email: document.getElementById('email').value || null
             };
 
             try {
@@ -125,55 +299,413 @@
         async function refreshEvents() {
             try {
                 const response = await fetch('/events/');
-                const events = await response.json();
-                
-                const eventsList = document.getElementById('eventsList');
-                eventsList.innerHTML = '';
-
-                events.forEach(event => {
-                    const weatherClass = `weather-${event.weather_condition.toLowerCase()}`;
-                    const card = `
-                        <div class="col-md-6">
-                            <div class="card weather-card ${weatherClass}">
-                                <div class="card-body">
-                                    <h5 class="card-title">${event.name}</h5>
-                                    <h6 class="card-subtitle mb-2 text-muted">${event.location}</h6>
-                                    <p class="card-text">
-                                        <strong>Date:</strong> ${new Date(event.date).toLocaleString()}<br>
-                                        <strong>Type:</strong> ${event.event_type}<br>
-                                        <strong>Weather:</strong> ${event.weather_data.description}<br>
-                                        <strong>Temperature:</strong> ${event.weather_data.temperature}°C<br>
-                                        <strong>Score:</strong> ${event.weather_score}/100
-                                    </p>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="checkAlternatives('${event.id}')">
-                                        Check Alternatives
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    eventsList.innerHTML += card;
-                });
+                events = await response.json(); // Store events in global variable
+                displayEvents(events);
             } catch (error) {
                 console.error('Error loading events:', error);
             }
         }
 
-        // Check alternative dates
-        async function checkAlternatives(eventId) {
-            try {
-                const response = await fetch(`/events/${eventId}/alternatives`);
-                const data = await response.json();
+        function displayEvents(events) {
+                const eventsList = document.getElementById('eventsList');
+                eventsList.innerHTML = '';
+
+                events.forEach(event => {
+                const eventDate = new Date(event.date);
+                const weatherData = event.weather_data || {};
+                const weatherAnalysis = event.weather_analysis || {};
+                const main = weatherData.main || {};
+                const weather = weatherData.weather?.[0] || {};
                 
-                let message = 'Alternative dates:\n\n';
-                data.alternatives.forEach(alt => {
-                    message += `${new Date(alt.date).toLocaleDateString()}: ${alt.condition} (${alt.score}/100)\n`;
-                });
-                
-                alert(message);
-            } catch (error) {
-                alert('Error checking alternatives');
+                const card = document.createElement('div');
+                card.className = `col-md-6`;
+                card.innerHTML = `
+                    <div class="card weather-card weather-${event.weather_condition || 'unknown'}">
+                                <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title">${event.name}</h5>
+                                    <span class="event-type-badge ${event.event_type}">
+                                        ${event.event_type.replace('_', ' ').toUpperCase()}
+                                    </span>
+                                </div>
+                                <div class="text-end">
+                                    <div class="weather-score-link" onclick="showWeatherDetails('${event.id}')">
+                                        <h3 class="mb-0">${event.weather_score || 'N/A'}</h3>
+                                        <small>Weather Score</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="weather-parameters mb-3">
+                                <div class="weather-parameter">
+                                    <i class="bi bi-calendar"></i>
+                                    ${eventDate.toLocaleDateString()} ${eventDate.toLocaleTimeString()}
+                                </div>
+                                <div class="weather-parameter">
+                                    <i class="bi bi-geo-alt"></i>
+                                    ${event.location}
+                                </div>
+                            </div>
+
+                            <div class="weather-details">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="weather-parameter">
+                                            <i class="bi bi-thermometer-half"></i>
+                                            Temperature: ${main.temp}°C
+                                        </div>
+                                        <div class="weather-parameter">
+                                            <i class="bi bi-wind"></i>
+                                            Wind: ${weatherData.wind?.speed} m/s
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="weather-parameter">
+                                            <i class="bi bi-cloud"></i>
+                                            Clouds: ${weatherData.clouds?.all}%
+                                        </div>
+                                        <div class="weather-parameter">
+                                            <i class="bi bi-droplet"></i>
+                                            Rain: ${weatherData.rain?.['3h'] || 0} mm
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3">
+                                <button class="btn btn-primary w-100" onclick="checkAlternatives('${event.id}')">
+                                    <i class="bi bi-calendar-check"></i> Check Alternative Dates
+                                </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                eventsList.appendChild(card);
+            });
+        }
+
+        function getWeatherAlertClass(condition) {
+            switch(condition) {
+                case 'excellent':
+                    return 'alert-success';
+                case 'good':
+                    return 'alert-info';
+                case 'fair':
+                    return 'alert-warning';
+                case 'poor':
+                    return 'alert-danger';
+                default:
+                    return 'alert-secondary';
             }
+        }
+
+        function formatWeatherValue(param, value) {
+            if (value === null || value === undefined) return 'N/A';
+            
+            switch(param) {
+                case 'temperature':
+                    return `${value}°C`;
+                case 'wind':
+                    return `${value} m/s`;
+                case 'rain':
+                    return `${value} mm`;
+                case 'clouds':
+                    return `${value}%`;
+                case 'visibility':
+                    return `${(value / 1000).toFixed(1)} km`;
+                default:
+                    return value;
+            }
+        }
+
+        function checkAlternatives(eventId) {
+            fetch(`/api/events/${eventId}/alternatives`)
+                .then(response => response.json())
+                .then(data => {
+                    const modalBody = document.getElementById('alternativesList');
+                    modalBody.innerHTML = '';
+                    
+                    if (data.alternatives && data.alternatives.length > 0) {
+                        // Add original event info
+                        const originalDate = new Date(data.original_date);
+                        modalBody.innerHTML = `
+                            <div class="alert alert-secondary mb-4">
+                                <h5>Current Event</h5>
+                                <p><strong>Date:</strong> ${originalDate.toLocaleDateString()} ${originalDate.toLocaleTimeString()}</p>
+                                <p><strong>Weather Score:</strong> ${data.original_score}/100</p>
+                                <p><strong>Condition:</strong> ${data.original_condition}</p>
+                            </div>
+                            <h5 class="mb-3">Better Alternative Dates</h5>
+                        `;
+
+                        // Add alternative dates
+                data.alternatives.forEach(alt => {
+                            const altDate = new Date(alt.date);
+                            const weatherData = alt.weather_data || {};
+                            const weatherAnalysis = alt.weather_analysis || {};
+                            
+                            const card = document.createElement('div');
+                            card.className = `card mb-3 weather-${alt.condition}`;
+                            card.innerHTML = `
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title mb-0">
+                                            ${altDate.toLocaleDateString()} ${altDate.toLocaleTimeString()}
+                                        </h5>
+                                        <span class="badge ${getWeatherAlertClass(alt.condition)}">
+                                            Score: ${alt.score}/100
+                                        </span>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Weather Analysis</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Parameter</th>
+                                                            <th>Value</th>
+                                                            <th>Score</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        ${Object.entries(weatherAnalysis).map(([param, data]) => `
+                                                            <tr>
+                                                                <td>${param.charAt(0).toUpperCase() + param.slice(1)}</td>
+                                                                <td>${formatWeatherValue(param, data.value)}</td>
+                                                                <td>${data.score}/100</td>
+                                                            </tr>
+                                                        `).join('')}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Weather Details</h6>
+                                            <div class="weather-details">
+                                                <p><strong>Temperature:</strong> ${weatherData.main?.temp}°C</p>
+                                                <p><strong>Feels Like:</strong> ${weatherData.main?.feels_like}°C</p>
+                                                <p><strong>Humidity:</strong> ${weatherData.main?.humidity}%</p>
+                                                <p><strong>Wind:</strong> ${weatherData.wind?.speed} m/s</p>
+                                                <p><strong>Clouds:</strong> ${weatherData.clouds?.all}%</p>
+                                                <p><strong>Description:</strong> ${weatherData.weather?.[0]?.description || 'N/A'}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mt-3">
+                                        <button class="btn btn-sm btn-outline-primary" 
+                                                onclick="showWeatherDetails('${eventId}', '${alt.date}')">
+                                            View Detailed Analysis
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            modalBody.appendChild(card);
+                        });
+                    } else {
+                        modalBody.innerHTML = `
+                            <div class="alert alert-info">
+                                <h5>No Better Alternatives Found</h5>
+                                <p>We couldn't find any dates with better weather conditions in the next 5 days.</p>
+                            </div>
+                        `;
+                    }
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('alternativesModal'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error fetching alternative dates');
+                });
+        }
+
+        function showWeatherDetails(eventId, altDate) {
+            const event = events.find(e => e.id === eventId);
+            if (!event) return;
+
+            const modalContent = document.getElementById('weatherDetailsContent');
+            
+            let weatherAnalysis, weatherScore, weatherCondition;
+            
+            if (altDate) {
+                fetch(`/api/events/${eventId}/alternatives`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const alt = data.alternatives.find(a => a.date === altDate);
+                        if (alt) {
+                            weatherAnalysis = alt.weather_analysis;
+                            weatherScore = alt.score;
+                            weatherCondition = alt.condition;
+                            displayWeatherDetails(weatherAnalysis, weatherScore, weatherCondition);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error fetching weather details');
+                    });
+            } else {
+                weatherAnalysis = event.weather_analysis;
+                weatherScore = event.weather_score;
+                weatherCondition = event.weather_condition;
+                displayWeatherDetails(weatherAnalysis, weatherScore, weatherCondition);
+            }
+        }
+
+        function displayWeatherDetails(weatherAnalysis, weatherScore, weatherCondition) {
+            if (!weatherAnalysis) return;
+
+            const modalContent = document.getElementById('weatherDetailsContent');
+            
+            const weightedScores = Object.entries(weatherAnalysis).map(([param, data]) => ({
+                parameter: param,
+                score: data.score,
+                weight: data.weight,
+                weightedScore: data.score * data.weight,
+                value: data.value
+            }));
+
+            weightedScores.sort((a, b) => b.weightedScore - a.weightedScore);
+
+            modalContent.innerHTML = `
+                <div class="container-fluid">
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="alert ${getWeatherAlertClass(weatherCondition)}">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-cloud-sun weather-icon"></i>
+                                    <div>
+                                        <h4 class="alert-heading mb-1">Overall Weather Analysis</h4>
+                                        <p class="mb-0">
+                                            <strong>Score:</strong> ${weatherScore}/100<br>
+                                            <strong>Condition:</strong> ${weatherCondition}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Parameter Analysis</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Parameter</th>
+                                                    <th>Value</th>
+                                                    <th>Score</th>
+                                                    <th>Weight</th>
+                                                    <th>Contribution</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${weightedScores.map(score => `
+                                                    <tr>
+                                                        <td>
+                                                            <i class="bi ${getParameterIcon(score.parameter)}"></i>
+                                                            ${score.parameter.charAt(0).toUpperCase() + score.parameter.slice(1)}
+                                                        </td>
+                                                        <td>${formatWeatherValue(score.parameter, score.value)}</td>
+                                                        <td>
+                                                            <div class="progress" style="height: 20px;">
+                                                                <div class="progress-bar ${getScoreColor(score.score)}" 
+                                                                     role="progressbar" 
+                                                                     style="width: ${score.score}%">
+                                                                    ${score.score}/100
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        <td>${(score.weight * 100).toFixed(0)}%</td>
+                                                        <td>${score.weightedScore.toFixed(1)}</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card shadow-sm">
+                                <div class="card-header">
+                                    <h5 class="mb-0">Score Breakdown</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="weatherScoreChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            const modal = new bootstrap.Modal(document.getElementById('weatherDetailsModal'));
+            modal.show();
+
+            modal._element.addEventListener('shown.bs.modal', function () {
+                const ctx = document.getElementById('weatherScoreChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: weightedScores.map(score => score.parameter.charAt(0).toUpperCase() + score.parameter.slice(1)),
+                        datasets: [{
+                            label: 'Parameter Scores',
+                            data: weightedScores.map(score => score.score),
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: {
+                                    stepSize: 20
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            });
+        }
+
+        function getParameterIcon(parameter) {
+            const icons = {
+                temperature: 'bi-thermometer-half',
+                wind: 'bi-wind',
+                rain: 'bi-droplet',
+                clouds: 'bi-cloud',
+                visibility: 'bi-eye'
+            };
+            return icons[parameter] || 'bi-question-circle';
+        }
+
+        function getScoreColor(score) {
+            if (score >= 80) return 'bg-success';
+            if (score >= 60) return 'bg-info';
+            if (score >= 40) return 'bg-warning';
+            return 'bg-danger';
         }
 
         // Initial load

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from typing import List
+from typing import List, Optional
 from ..models import Event, EventCreate, EventUpdate, WeatherResponse, WeatherAlternatives
 from ..services.event_service import event_service
 
@@ -7,6 +7,7 @@ router = APIRouter()
 
 @router.post("/", response_model=Event)
 async def create_event(event: EventCreate):
+    """Create a new event"""
     try:
         return await event_service.create_event(event)
     except Exception as e:
@@ -14,25 +15,63 @@ async def create_event(event: EventCreate):
 
 @router.get("/", response_model=List[Event])
 async def get_events():
-    return event_service.get_all_events()
+    """Get all events"""
+    try:
+        return await event_service.get_events()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/{event_id}", response_model=Event)
 async def get_event(event_id: str):
-    event = event_service.get_event(event_id)
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-    return event
+    """Get event by ID"""
+    try:
+        event = await event_service.get_event(event_id)
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        return event
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.put("/{event_id}", response_model=Event)
-async def update_event(event_id: str, event_update: EventUpdate):
-    event = await event_service.update_event(event_id, event_update)
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-    return event
+async def update_event(event_id: str, event: EventUpdate):
+    """Update an event"""
+    try:
+        existing_event = await event_service.get_event(event_id)
+        if not existing_event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        
+        # Update only provided fields
+        update_data = event.dict(exclude_unset=True)
+        updated_event = existing_event.copy(update=update_data)
+        updated_event.id = event_id
+        
+        result = await event_service.update_event(updated_event)
+        if not result:
+            raise HTTPException(status_code=500, detail="Failed to update event")
+        return result
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/{event_id}")
+async def delete_event(event_id: str):
+    """Delete an event"""
+    try:
+        success = await event_service.delete_event(event_id)
+        if not success:
+            raise HTTPException(status_code=404, detail="Event not found")
+        return {"message": "Event deleted successfully"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/{event_id}/weather-check", response_model=WeatherResponse)
 async def check_event_weather(event_id: str):
-    event = event_service.get_event(event_id)
+    event = await event_service.get_event(event_id)
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     
@@ -49,16 +88,13 @@ async def check_event_weather(event_id: str):
 
 @router.get("/{event_id}/alternatives", response_model=WeatherAlternatives)
 async def get_alternative_dates(event_id: str):
-    event = event_service.get_event(event_id)
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-    
-    alternatives = await event_service.get_alternative_dates(event_id)
-    if not alternatives:
-        raise HTTPException(status_code=400, detail="Could not find alternative dates")
-    
-    return WeatherAlternatives(
-        event_id=event_id,
-        original_date=event.date,
-        alternatives=alternatives
-    ) 
+    """Get alternative dates for an event"""
+    try:
+        alternatives = await event_service.get_alternative_dates(event_id)
+        if not alternatives:
+            raise HTTPException(status_code=404, detail="Event not found or no alternatives available")
+        return alternatives
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) 

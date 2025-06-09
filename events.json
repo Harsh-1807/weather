@@ -1,42 +1,687 @@
-{
-  "1": {
-    "name": "Cricket Tournament",
-    "location": "Mumbai",
-    "date": "2024-03-16T10:00:00",
-    "event_type": "cricket",
-    "description": "Annual cricket tournament",
-    "id": "1",
-    "weather_data": {
-      "temperature": 29.52,
-      "precipitation": 0.0,
-      "wind_speed": 4.05,
-      "cloud_cover": 26.0,
-      "description": "scattered clouds",
-      "timestamp": "2025-06-09T20:30:00"
-    },
-    "weather_score": 100.0,
-    "weather_condition": "good",
-    "created_at": "2025-06-09T13:07:31.125622",
-    "updated_at": "2025-06-09T13:07:31.125627"
-  },
-  "2": {
+[
+  {
+    "id": "a5caedaf-da20-449a-ba9b-b1f748c3d4a0",
     "name": "Badminton Tournament",
-    "location": "pune",
-    "date": "2025-06-19T18:54:00",
-    "event_type": "other",
-    "description": "Outdoor",
-    "id": "2",
+    "date": "2025-06-12T01:32:00",
+    "location": "Kalyan",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
     "weather_data": {
-      "temperature": 29.52,
-      "precipitation": 0.0,
-      "wind_speed": 5.96,
-      "cloud_cover": 90.0,
-      "description": "overcast clouds",
-      "timestamp": "2025-06-14T17:30:00"
+      "dt": 1749675600,
+      "main": {
+        "temp": 29.04,
+        "feels_like": 34,
+        "temp_min": 29.04,
+        "temp_max": 29.04,
+        "pressure": 1004,
+        "sea_level": 1004,
+        "grnd_level": 999,
+        "humidity": 76,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 500,
+          "main": "Rain",
+          "description": "light rain",
+          "icon": "10n"
+        }
+      ],
+      "clouds": {
+        "all": 64
+      },
+      "wind": {
+        "speed": 5.1,
+        "deg": 280,
+        "gust": 7.31
+      },
+      "visibility": 10000,
+      "pop": 1,
+      "rain": {
+        "3h": 0.58
+      },
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-11 21:00:00"
     },
-    "weather_score": 0,
-    "weather_condition": "poor",
-    "created_at": "2025-06-09T13:26:06.867268",
-    "updated_at": "2025-06-09T13:26:06.867270"
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": null,
+    "weather_condition": null,
+    "weather_analysis": null,
+    "created_at": "2025-06-09T20:02:15.336038",
+    "updated_at": "2025-06-09T20:02:15.336042"
+  },
+  {
+    "id": "0818e7cc-b98e-407a-8af5-cc7951a95ffc",
+    "name": "Badminton Tournament",
+    "date": "2025-06-11T01:43:00",
+    "location": "Kalyan",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
+    "weather_data": {
+      "dt": 1749589200,
+      "main": {
+        "temp": 28.63,
+        "feels_like": 32.62,
+        "temp_min": 28.63,
+        "temp_max": 28.63,
+        "pressure": 1005,
+        "sea_level": 1005,
+        "grnd_level": 999,
+        "humidity": 74,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 801,
+          "main": "Clouds",
+          "description": "few clouds",
+          "icon": "02n"
+        }
+      ],
+      "clouds": {
+        "all": 24
+      },
+      "wind": {
+        "speed": 2.77,
+        "deg": 256,
+        "gust": 4.87
+      },
+      "visibility": 10000,
+      "pop": 0,
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-10 21:00:00"
+    },
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": 82.5,
+    "weather_condition": "excellent",
+    "weather_analysis": {
+      "temperature": {
+        "score": 70,
+        "value": 28.63,
+        "weight": 0.25
+      },
+      "wind": {
+        "score": 100,
+        "value": 2.77,
+        "weight": 0.15
+      },
+      "rain": {
+        "score": 100,
+        "value": 0,
+        "weight": 0.25
+      },
+      "clouds": {
+        "score": 100,
+        "value": 24,
+        "weight": 0.1
+      },
+      "visibility": {
+        "score": 100,
+        "value": 10000,
+        "weight": 0.15
+      }
+    },
+    "created_at": null,
+    "updated_at": null
+  },
+  {
+    "id": "13733cd3-ccff-4078-96f0-6f2138338bd7",
+    "name": "Badminton Tournament",
+    "date": "2025-06-11T01:57:00",
+    "location": "Kalyan",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
+    "weather_data": {
+      "dt": 1749589200,
+      "main": {
+        "temp": 28.63,
+        "feels_like": 32.62,
+        "temp_min": 28.63,
+        "temp_max": 28.63,
+        "pressure": 1005,
+        "sea_level": 1005,
+        "grnd_level": 999,
+        "humidity": 74,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 801,
+          "main": "Clouds",
+          "description": "few clouds",
+          "icon": "02n"
+        }
+      ],
+      "clouds": {
+        "all": 24
+      },
+      "wind": {
+        "speed": 2.77,
+        "deg": 256,
+        "gust": 4.87
+      },
+      "visibility": 10000,
+      "pop": 0,
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-10 21:00:00"
+    },
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": 82.5,
+    "weather_condition": "excellent",
+    "weather_analysis": {
+      "temperature": {
+        "score": 70,
+        "value": 28.63,
+        "weight": 0.25
+      },
+      "wind": {
+        "score": 100,
+        "value": 2.77,
+        "weight": 0.15
+      },
+      "rain": {
+        "score": 100,
+        "value": 0,
+        "weight": 0.25
+      },
+      "clouds": {
+        "score": 100,
+        "value": 24,
+        "weight": 0.1
+      },
+      "visibility": {
+        "score": 100,
+        "value": 10000,
+        "weight": 0.15
+      }
+    },
+    "created_at": null,
+    "updated_at": null
+  },
+  {
+    "id": "37f2affc-f024-4a71-96b5-877d77aea53c",
+    "name": "Badminton Tournament",
+    "date": "2025-06-11T02:09:00",
+    "location": "Kalyan",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
+    "weather_data": {
+      "dt": 1749589200,
+      "main": {
+        "temp": 28.63,
+        "feels_like": 32.62,
+        "temp_min": 28.63,
+        "temp_max": 28.63,
+        "pressure": 1005,
+        "sea_level": 1005,
+        "grnd_level": 999,
+        "humidity": 74,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 801,
+          "main": "Clouds",
+          "description": "few clouds",
+          "icon": "02n"
+        }
+      ],
+      "clouds": {
+        "all": 24
+      },
+      "wind": {
+        "speed": 2.77,
+        "deg": 256,
+        "gust": 4.87
+      },
+      "visibility": 10000,
+      "pop": 0,
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-10 21:00:00"
+    },
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": 82.5,
+    "weather_condition": "excellent",
+    "weather_analysis": {
+      "temperature": {
+        "score": 70,
+        "value": 28.63,
+        "weight": 0.25
+      },
+      "wind": {
+        "score": 100,
+        "value": 2.77,
+        "weight": 0.15
+      },
+      "rain": {
+        "score": 100,
+        "value": 0,
+        "weight": 0.25
+      },
+      "clouds": {
+        "score": 100,
+        "value": 24,
+        "weight": 0.1
+      },
+      "visibility": {
+        "score": 100,
+        "value": 10000,
+        "weight": 0.15
+      }
+    },
+    "created_at": null,
+    "updated_at": null
+  },
+  {
+    "id": "4cc2d84a-6a22-47ea-a9a6-41ee16ac5113",
+    "name": "Badminton Tournament",
+    "date": "2025-06-12T02:31:00",
+    "location": "Kalyan",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
+    "weather_data": {
+      "dt": 1749675600,
+      "main": {
+        "temp": 29.04,
+        "feels_like": 34,
+        "temp_min": 29.04,
+        "temp_max": 29.04,
+        "pressure": 1004,
+        "sea_level": 1004,
+        "grnd_level": 999,
+        "humidity": 76,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 500,
+          "main": "Rain",
+          "description": "light rain",
+          "icon": "10n"
+        }
+      ],
+      "clouds": {
+        "all": 64
+      },
+      "wind": {
+        "speed": 5.1,
+        "deg": 280,
+        "gust": 7.31
+      },
+      "visibility": 10000,
+      "pop": 1,
+      "rain": {
+        "3h": 0.58
+      },
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-11 21:00:00"
+    },
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": 58.0,
+    "weather_condition": "fair",
+    "weather_analysis": {
+      "temperature": {
+        "score": 70,
+        "value": 29.04,
+        "weight": 0.25
+      },
+      "wind": {
+        "score": 100,
+        "value": 5.1,
+        "weight": 0.15
+      },
+      "rain": {
+        "score": 30,
+        "value": 0.58,
+        "weight": 0.25
+      },
+      "clouds": {
+        "score": 30,
+        "value": 64,
+        "weight": 0.1
+      },
+      "visibility": {
+        "score": 100,
+        "value": 10000,
+        "weight": 0.15
+      }
+    },
+    "created_at": null,
+    "updated_at": null
+  },
+  {
+    "id": "8a380c2e-8748-4728-bfc5-0960b76c5ed3",
+    "name": "Badminton Tournament",
+    "date": "2025-06-11T02:47:00",
+    "location": "pune",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
+    "weather_data": {
+      "dt": 1749589200,
+      "main": {
+        "temp": 24.28,
+        "feels_like": 24.98,
+        "temp_min": 24.28,
+        "temp_max": 24.28,
+        "pressure": 1005,
+        "sea_level": 1005,
+        "grnd_level": 933,
+        "humidity": 85,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 803,
+          "main": "Clouds",
+          "description": "broken clouds",
+          "icon": "04n"
+        }
+      ],
+      "clouds": {
+        "all": 80
+      },
+      "wind": {
+        "speed": 4.59,
+        "deg": 264,
+        "gust": 8.32
+      },
+      "visibility": 10000,
+      "pop": 0,
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-10 21:00:00"
+    },
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": 83.0,
+    "weather_condition": "excellent",
+    "weather_analysis": {
+      "temperature": {
+        "score": 100,
+        "value": 24.28,
+        "weight": 0.25
+      },
+      "wind": {
+        "score": 100,
+        "value": 4.59,
+        "weight": 0.15
+      },
+      "rain": {
+        "score": 100,
+        "value": 0,
+        "weight": 0.25
+      },
+      "clouds": {
+        "score": 30,
+        "value": 80,
+        "weight": 0.1
+      },
+      "visibility": {
+        "score": 100,
+        "value": 10000,
+        "weight": 0.15
+      }
+    },
+    "created_at": null,
+    "updated_at": null
+  },
+  {
+    "id": "e3cee768-4973-4028-8708-2c34e7f7c50c",
+    "name": "Badminton Tournament",
+    "date": "2025-06-12T02:48:00",
+    "location": "Kalyan",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
+    "weather_data": {
+      "dt": 1749675600,
+      "main": {
+        "temp": 29.04,
+        "feels_like": 34,
+        "temp_min": 29.04,
+        "temp_max": 29.04,
+        "pressure": 1004,
+        "sea_level": 1004,
+        "grnd_level": 999,
+        "humidity": 76,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 500,
+          "main": "Rain",
+          "description": "light rain",
+          "icon": "10n"
+        }
+      ],
+      "clouds": {
+        "all": 64
+      },
+      "wind": {
+        "speed": 5.1,
+        "deg": 280,
+        "gust": 7.31
+      },
+      "visibility": 10000,
+      "pop": 1,
+      "rain": {
+        "3h": 0.58
+      },
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-11 21:00:00"
+    },
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": 58.0,
+    "weather_condition": "fair",
+    "weather_analysis": {
+      "temperature": {
+        "score": 70,
+        "value": 29.04,
+        "weight": 0.25
+      },
+      "wind": {
+        "score": 100,
+        "value": 5.1,
+        "weight": 0.15
+      },
+      "rain": {
+        "score": 30,
+        "value": 0.58,
+        "weight": 0.25
+      },
+      "clouds": {
+        "score": 30,
+        "value": 64,
+        "weight": 0.1
+      },
+      "visibility": {
+        "score": 100,
+        "value": 10000,
+        "weight": 0.15
+      }
+    },
+    "created_at": null,
+    "updated_at": null
+  },
+  {
+    "id": "a41a951d-cf21-42d3-b98f-aa6a016a4674",
+    "name": "Badminton Tournament",
+    "date": "2025-06-12T02:48:00",
+    "location": "Pune",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
+    "weather_data": {
+      "dt": 1749675600,
+      "main": {
+        "temp": 24.92,
+        "feels_like": 25.61,
+        "temp_min": 24.92,
+        "temp_max": 24.92,
+        "pressure": 1004,
+        "sea_level": 1004,
+        "grnd_level": 932,
+        "humidity": 82,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 804,
+          "main": "Clouds",
+          "description": "overcast clouds",
+          "icon": "04n"
+        }
+      ],
+      "clouds": {
+        "all": 100
+      },
+      "wind": {
+        "speed": 4.68,
+        "deg": 261,
+        "gust": 11.33
+      },
+      "visibility": 10000,
+      "pop": 0,
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-11 21:00:00"
+    },
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": 83.0,
+    "weather_condition": "excellent",
+    "weather_analysis": {
+      "temperature": {
+        "score": 100,
+        "value": 24.92,
+        "weight": 0.25
+      },
+      "wind": {
+        "score": 100,
+        "value": 4.68,
+        "weight": 0.15
+      },
+      "rain": {
+        "score": 100,
+        "value": 0,
+        "weight": 0.25
+      },
+      "clouds": {
+        "score": 30,
+        "value": 100,
+        "weight": 0.1
+      },
+      "visibility": {
+        "score": 100,
+        "value": 10000,
+        "weight": 0.15
+      }
+    },
+    "created_at": null,
+    "updated_at": null
+  },
+  {
+    "id": "668bed8e-eab4-495a-a448-1435523901be",
+    "name": "Badminton Tournament",
+    "date": "2025-06-11T02:55:00",
+    "location": "Pune",
+    "description": "",
+    "email": null,
+    "event_type": "outdoor_sports",
+    "weather_data": {
+      "dt": 1749589200,
+      "main": {
+        "temp": 24.28,
+        "feels_like": 24.98,
+        "temp_min": 24.28,
+        "temp_max": 24.28,
+        "pressure": 1005,
+        "sea_level": 1005,
+        "grnd_level": 933,
+        "humidity": 85,
+        "temp_kf": 0
+      },
+      "weather": [
+        {
+          "id": 803,
+          "main": "Clouds",
+          "description": "broken clouds",
+          "icon": "04n"
+        }
+      ],
+      "clouds": {
+        "all": 80
+      },
+      "wind": {
+        "speed": 4.59,
+        "deg": 264,
+        "gust": 8.32
+      },
+      "visibility": 10000,
+      "pop": 0,
+      "sys": {
+        "pod": "n"
+      },
+      "dt_txt": "2025-06-10 21:00:00"
+    },
+    "air_quality": null,
+    "historical_weather": null,
+    "weather_score": 83.0,
+    "weather_condition": "excellent",
+    "weather_analysis": {
+      "temperature": {
+        "score": 100,
+        "value": 24.28,
+        "weight": 0.25
+      },
+      "wind": {
+        "score": 100,
+        "value": 4.59,
+        "weight": 0.15
+      },
+      "rain": {
+        "score": 100,
+        "value": 0,
+        "weight": 0.25
+      },
+      "clouds": {
+        "score": 30,
+        "value": 80,
+        "weight": 0.1
+      },
+      "visibility": {
+        "score": 100,
+        "value": 10000,
+        "weight": 0.15
+      }
+    },
+    "created_at": null,
+    "updated_at": null
   }
-}
+]
