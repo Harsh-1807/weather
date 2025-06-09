@@ -48,6 +48,7 @@ class EventService:
             print(f"Error saving events: {e}")
 
     async def create_event(self, event: EventCreate) -> Event:
+        """Create a new event with weather data"""
         event_id = str(len(self.events) + 1)
         new_event = Event(
             id=event_id,
@@ -57,15 +58,19 @@ class EventService:
         )
         
         # Get weather data for the event
-        weather_data = await weather_service.get_weather(event.location, event.date)
-        if weather_data:
-            new_event.weather_data = weather_data
-            new_event.weather_score = weather_service.calculate_weather_score(
-                weather_data, event.event_type
-            )
-            new_event.weather_condition = weather_service.get_weather_condition(
-                new_event.weather_score
-            )
+        try:
+            weather_data = await weather_service.get_weather(event.location, event.date)
+            if weather_data:
+                new_event.weather_data = weather_data
+                new_event.weather_score = weather_service.calculate_weather_score(
+                    weather_data, event.event_type
+                )
+                new_event.weather_condition = weather_service.get_weather_condition(
+                    new_event.weather_score
+                )
+        except Exception as e:
+            logger.error(f"Error getting weather data for new event: {e}")
+            # Continue with event creation even if weather data fails
 
         self.events[event_id] = new_event
         self._save_events()
@@ -107,6 +112,7 @@ class EventService:
     async def get_alternative_dates(
         self, event_id: str, days_range: int = 7
     ) -> Optional[List[Dict]]:
+        """Get alternative dates with better weather conditions"""
         event = self.get_event(event_id)
         if not event:
             return None
@@ -114,7 +120,13 @@ class EventService:
         alternatives = []
         base_date = event.date
         location = event.location
+        event_type = event.event_type
 
+        # Get current weather score for comparison
+        current_score = event.weather_score or 0
+        current_condition = event.weather_condition
+
+        # Check dates before and after the event
         for day_offset in range(-days_range, days_range + 1):
             if day_offset == 0:
                 continue
@@ -124,19 +136,57 @@ class EventService:
             
             if weather_data:
                 score = weather_service.calculate_weather_score(
-                    weather_data, event.event_type
+                    weather_data, event_type
                 )
                 condition = weather_service.get_weather_condition(score)
                 
-                alternatives.append({
-                    "date": check_date,
-                    "weather_data": weather_data,
-                    "score": score,
-                    "condition": condition
-                })
+                # Only include alternatives with better or equal weather
+                if score >= current_score:
+                    alternatives.append({
+                        "date": check_date,
+                        "weather_data": weather_data,
+                        "score": score,
+                        "condition": condition,
+                        "improvement": score - current_score,
+                        "days_from_event": day_offset
+                    })
 
-        # Sort alternatives by score in descending order
-        alternatives.sort(key=lambda x: x["score"], reverse=True)
+        # Sort alternatives by:
+        # 1. Weather score (highest first)
+        # 2. Closest to original date
+        alternatives.sort(
+            key=lambda x: (-x["score"], abs(x["days_from_event"]))
+        )
+
+        # If no better alternatives found, include the best available dates
+        if not alternatives:
+            all_dates = []
+            for day_offset in range(-days_range, days_range + 1):
+                if day_offset == 0:
+                    continue
+
+                check_date = base_date + timedelta(days=day_offset)
+                weather_data = await weather_service.get_weather(location, check_date)
+                
+                if weather_data:
+                    score = weather_service.calculate_weather_score(
+                        weather_data, event_type
+                    )
+                    condition = weather_service.get_weather_condition(score)
+                    
+                    all_dates.append({
+                        "date": check_date,
+                        "weather_data": weather_data,
+                        "score": score,
+                        "condition": condition,
+                        "improvement": score - current_score,
+                        "days_from_event": day_offset
+                    })
+
+            # Sort by score and return top 5
+            all_dates.sort(key=lambda x: (-x["score"], abs(x["days_from_event"])))
+            alternatives = all_dates[:5]
+
         return alternatives[:5]  # Return top 5 alternatives
 
 event_service = EventService() 

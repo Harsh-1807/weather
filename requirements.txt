@@ -3,8 +3,10 @@ uvicorn
 python-dotenv
 requests
 pydantic
+pydantic-settings
 python-jose
 passlib
 python-multipart
 aiohttp
 cachetools
+jinja2

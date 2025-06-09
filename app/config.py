@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Settings(BaseSettings):
-    OPENWEATHER_API_KEY: str = os.getenv("OPENWEATHER_API_KEY", "")
+    OPENWEATHER_API_KEY: str = os.getenv("OPENWEATHER_API_KEY", "d46c861c593afe826fe8141072c309eb")
     CACHE_DURATION: int = 21600  # 6 hours in seconds
     WEATHER_SCORE_THRESHOLDS: dict = {
         "good": 80,
@@ -28,6 +28,12 @@ class Settings(BaseSettings):
         },
         "hiking": {
             "temperature": {"min": 10, "max": 25},
+            "precipitation": {"max": 30},
+            "wind": {"max": 25},
+            "cloud_cover": {"max": 70}
+        },
+        "other": {
+            "temperature": {"min": 15, "max": 30},
             "precipitation": {"max": 30},
             "wind": {"max": 25},
             "cloud_cover": {"max": 70}

@@ -1,5 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from .routers import events, weather
 from .config import settings
 
@@ -22,10 +24,9 @@ app.add_middleware(
 app.include_router(events.router, prefix="/events", tags=["events"])
 app.include_router(weather.router, prefix="/weather", tags=["weather"])
 
+# Templates
+templates = Jinja2Templates(directory="app/templates")
+
 @app.get("/")
-async def root():
-    return {
-        "message": "Welcome to Weather Event Planner API",
-        "docs_url": "/docs",
-        "redoc_url": "/redoc"
-    } 
+async def root(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request}) 
