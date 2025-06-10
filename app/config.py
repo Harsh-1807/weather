@@ -94,9 +94,13 @@ class Settings(BaseSettings):
         }
     }
 
-    # Database URLs
+    # Database Settings
     POSTGRES_URL: str = "postgresql://project_vk7r_user:a7sQJEldVn0SHLy17qIMJyngZgbeLHZe@dpg-d143l0ggjchc73fo9tn0-a.singapore-postgres.render.com/project_vk7r"
-    MONGO_URI: str = "mongodb+srv://nkharshbachhav:6vXGGAWOSLpGkXPJ@resume.ooqny.mongodb.net/resume_database?retryWrites=true&w=majority"
+    POSTGRES_USER: str = "project_vk7r_user"
+    POSTGRES_PASSWORD: str = "a7sQJEldVn0SHLy17qIMJyngZgbeLHZe"
+    POSTGRES_HOST: str = "dpg-d143l0ggjchc73fo9tn0-a.singapore-postgres.render.com"
+    POSTGRES_PORT: str = "5432"
+    POSTGRES_DB: str = "project_vk7r"
     
     # JWT Settings
     SECRET_KEY: str = "your-secret-key-here"  # Change this in production
@@ -108,7 +112,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: Optional[str] = None
     
     # Weather API Settings
-    WEATHER_API_KEY: Optional[str] = None
+    WEATHER_API_KEY: str = "d46c861c593afe826fe8141072c309eb"
 
     class Config:
         env_file = ".env"
