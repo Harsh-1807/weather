@@ -8,6 +8,7 @@ from typing import Optional
 from ..database import get_db
 from ..models.user import UserCreate, User, UserDB
 from ..config import settings
+from fastapi.responses import Response
 
 router = APIRouter()
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -77,7 +78,16 @@ async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = 
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    response = Response(content="Login successful")
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        samesite="lax",
+        secure=False  # Set to True in production with HTTPS
+    )
+    return response
 
 @router.get("/users/me", response_model=User)
 async def read_users_me(current_user: UserDB = Depends(get_current_user)):

@@ -61,14 +61,12 @@
                     body: formData
                 });
 
-                const data = await response.json();
-
                 if (response.ok) {
-                    // Store the token
-                    localStorage.setItem('token', data.access_token);
                     alert('Login successful!');
+                    // Redirect to root path after successful login
                     window.location.href = '/';
                 } else {
+                    const data = await response.json();
                     alert(data.detail || 'Login failed. Please try again.');
                 }
             } catch (error) {
@@ -78,4 +76,4 @@
         });
     </script>
 </body>
-</html> 
+</html>

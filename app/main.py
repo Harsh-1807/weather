@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException, Request, Form, Depends
+from fastapi import FastAPI, HTTPException, Request, Form, Depends, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 from .routers import events, weather, auth, test_db
 from .config import settings
 from datetime import datetime
@@ -55,6 +56,11 @@ async def startup_event():
 
 @app.get("/")
 async def root(request: Request):
+    """Serve main page if authenticated, otherwise redirect to login"""
+    # Check for token in cookies
+    token = request.cookies.get("access_token")
+    if not token:
+        return RedirectResponse(url="/login")
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/register")
