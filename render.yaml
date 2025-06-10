@@ -7,11 +7,46 @@ services:
     envVars:
       - key: POSTGRES_URL
         value: postgresql://project_vk7r_user:a7sQJEldVn0SHLy17qIMJyngZgbeLHZe@dpg-d143l0ggjchc73fo9tn0-a.singapore-postgres.render.com/project_vk7r
-      - key: MONGO_URI
-        value: mongodb+srv://nkharshbachhav:6vXGGAWOSLpGkXPJ@resume.ooqny.mongodb.net/resume_database?retryWrites=true&w=majority
+      - key: POSTGRES_USER
+        value: project_vk7r_user
+      - key: POSTGRES_PASSWORD
+        value: a7sQJEldVn0SHLy17qIMJyngZgbeLHZe
+      - key: POSTGRES_HOST
+        value: dpg-d143l0ggjchc73fo9tn0-a.singapore-postgres.render.com
+      - key: POSTGRES_PORT
+        value: 5432
+      - key: POSTGRES_DB
+        value: project_vk7r
       - key: SECRET_KEY
         generateValue: true
       - key: ALGORITHM
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
-        value: 30 
+        value: 30
+      - key: WEATHER_API_KEY
+        value: d46c861c593afe826fe8141072c309eb
+      - key: OPENWEATHER_API_KEY
+        value: d46c861c593afe826fe8141072c309eb
+      - key: WEATHER_API_HOST
+        value: weatherapi-com.p.rapidapi.com
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        value: nkharshbachhav@gmail.com
+      - key: SMTP_USERNAME
+        value: nkharshbachhav@gmail.com
+      - key: SMTP_PASSWORD
+        value: gkpz rfne hrep uzat
+      - key: FROM_EMAIL
+        value: nkharshbachhav@gmail.com
+      - key: FROM_NAME
+        value: Weather Event Planner
+    healthCheckPath: /
+    autoDeploy: true
+    plan: free
+    disk:
+      name: tmp
+      mountPath: /tmp
+      sizeGB: 1 
