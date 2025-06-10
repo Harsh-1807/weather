@@ -94,6 +94,22 @@ class Settings(BaseSettings):
         }
     }
 
+    # Database URLs
+    POSTGRES_URL: str = "postgresql://project_vk7r_user:a7sQJEldVn0SHLy17qIMJyngZgbeLHZe@dpg-d143l0ggjchc73fo9tn0-a.singapore-postgres.render.com/project_vk7r"
+    MONGO_URI: str = "mongodb+srv://nkharshbachhav:6vXGGAWOSLpGkXPJ@resume.ooqny.mongodb.net/resume_database?retryWrites=true&w=majority"
+    
+    # JWT Settings
+    SECRET_KEY: str = "your-secret-key-here"  # Change this in production
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    
+    # Google OAuth Settings
+    GOOGLE_CLIENT_ID: Optional[str] = None
+    GOOGLE_CLIENT_SECRET: Optional[str] = None
+    
+    # Weather API Settings
+    WEATHER_API_KEY: Optional[str] = None
+
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"

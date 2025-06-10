@@ -1,15 +1,21 @@
-from fastapi import FastAPI, HTTPException, Request, Form
+from fastapi import FastAPI, HTTPException, Request, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from .routers import events, weather
+from .routers import events, weather, auth, test_db
 from .config import settings
 from datetime import datetime
 import asyncio
 from .tasks.weather_notifications import start_notification_tasks
 from .services.event_service import event_service
 from .models import EventCreate, EventUpdate
+from .models.user import UserDB
+from .database import engine, get_db
+from sqlalchemy.orm import Session
 import logging
+
+# Create database tables
+UserDB.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Weather Event Planner",
@@ -27,8 +33,10 @@ app.add_middleware(
 )
 
 # Include routers
+app.include_router(auth.router, prefix="/auth", tags=["authentication"])
 app.include_router(events.router, prefix="/events", tags=["events"])
 app.include_router(weather.router, prefix="/weather", tags=["weather"])
+app.include_router(test_db.router, prefix="/test", tags=["database-tests"])
 
 # Templates
 templates = Jinja2Templates(directory="app/templates")
@@ -48,6 +56,14 @@ async def startup_event():
 @app.get("/")
 async def root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+@app.get("/register")
+async def register_page(request: Request):
+    return templates.TemplateResponse("register.html", {"request": request})
+
+@app.get("/login")
+async def login_page(request: Request):
+    return templates.TemplateResponse("login.html", {"request": request})
 
 @app.post("/events/")
 async def create_event(

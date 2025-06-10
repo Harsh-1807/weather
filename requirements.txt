@@ -1,15 +1,19 @@
+
 fastapi
 uvicorn
 python-dotenv
 requests
 pydantic
 pydantic-settings
-python-jose
-passlib
+python-jose[cryptography]
+passlib[bcrypt]
 python-multipart
 aiohttp
 cachetools
 jinja2
 sqlalchemy
 django
-pip install aiosmtplib
+aiosmtplib
+motor
+psycopg2-binary
+email-validator
